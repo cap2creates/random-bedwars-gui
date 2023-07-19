@@ -15,6 +15,8 @@ function load()
         end
     end
     local mainfile = game:GetService("HttpService"):JSONDecode(readfile("test/"..dothingname))
+    if mainfile then print(mainfile) end
+    if not mainfile then print("fail") end
     mainfile.dothing()
     return folder
 end

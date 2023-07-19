@@ -1,3 +1,4 @@
+local mainscript = {}
 local scripts = {
     GuiMain = readfile("test/gui.lua"),
     Functions = readfile("test/functions.lua"),
@@ -5,12 +6,9 @@ local scripts = {
 local https = game:GetService("HttpService")
 local file = "profile.txt"
 function save()
-    print("e2")
     if (writefile) then
-        print("e3")
         writefile("test/"..file,https:JSONEncode(scripts.GuiMain.Tabs))
     else
-        print("e4")
         warn("Your executor does not support writefile, please get another to use this script.")
     end
 end
@@ -23,5 +21,8 @@ function load()
         return false
     end
 end
-print("e1")
-save()
+function mainscript.dostuff()
+    --enter all gui stuff and everything here
+    save()
+end
+return mainscript

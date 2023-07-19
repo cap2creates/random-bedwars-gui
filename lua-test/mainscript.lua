@@ -1,6 +1,6 @@
 local scripts = {
-    GuiMain = readfile("gui.lua"),
-    Functions = readfile("functions.lua"),
+    GuiMain = readfile("test/gui.lua"),
+    Functions = readfile("test/functions.lua"),
 }
 local https = game:GetService("HttpService")
 local file = "profile.txt"

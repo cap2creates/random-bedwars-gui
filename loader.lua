@@ -14,6 +14,7 @@ function load()
             writefile("test/"..filename, game:HttpGet("https://raw.githubusercontent.com/cap2creates/random-bedwars-gui/main/lua-test/"..filename, true))
         end
     end
+    print("e")
     local mainfile = readfile("test/"..dothingname)
     if mainfile then print(mainfile) end
     if not mainfile then print("fail") end

@@ -6,7 +6,7 @@ local https = game:GetService("HttpService")
 local file = "profile.txt"
 function save()
     if (writefile) then
-        writefile(file,https:JSONEncode(scripts.GuiMain.Tabs))
+        writefile("test/"..file,https:JSONEncode(scripts.GuiMain.Tabs))
     else
         warn("Your executor does not support writefile, please get another to use this script.")
     end

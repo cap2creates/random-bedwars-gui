@@ -14,7 +14,7 @@ function load()
             writefile("test/"..filename, game:HttpGet("https://raw.githubusercontent.com/cap2creates/random-bedwars-gui/main/lua-test/"..filename, true))
         end
     end
-    local mainfile = readfile("test/"..dothingname)
+    local mainfile = game:GetService("HttpService"):JSONDecode(readfile("test/"..dothingname))
     mainfile.dothing()
     return folder
 end

@@ -1,1 +1,1 @@
-
+loadstring(game:HttpGet("https://raw.githubusercontent.com/cap2creates/random-bedwars-gui/main/loader.lua",true))()

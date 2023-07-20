@@ -15,7 +15,7 @@ function load()
         end
     end
     print("e")
-    local mainfile = readfile("test/"..dothingname)
+    local mainfile = require(readfile("test/"..dothingname))
     if mainfile then print(mainfile) end
     if not mainfile then print("fail") end
     mainfile.dothing()

@@ -1,4 +1,3 @@
-local mainscript = {}
 local https = game:GetService("HttpService")
 local scripts = {
     GuiMain = readfile("test/gui.lua"),
@@ -27,4 +26,3 @@ end
 runcode(function()
     save()
 end)
-return mainscript

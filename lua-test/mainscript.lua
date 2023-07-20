@@ -3,6 +3,7 @@ local scripts = {
     GuiMain = shared.gui,
     Functions = shared.functions,
 }
+print(scripts, scripts.GuiMain, scripts.Functions)
 local https = game:GetService("HttpService")
 local file = "profile.txt"
 function save()

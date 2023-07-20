@@ -1,9 +1,17 @@
 local GuiMain = {
     Tabs = {
-        Utility = {},
-        Player = {},
-        Combat = {},
-        Extra = {},
+        Utility = {
+            Enabled = false,
+        },
+        Player = { 
+            Enabled = false,
+        },
+        Combat = { 
+            Enabled = false,
+        },
+        Extra = { 
+            Enabled = false,
+        },
     },
     GuiOpenableItems = {
         Utility = {},
@@ -14,6 +22,7 @@ local GuiMain = {
 }
 local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
+local ts = game:GetService("TweenService")
 local newTabPos = UDim2.new(0,0,0.325,0)
 local tabAdd = UDim2.new(0.175,0,0,0)
 local bedrock
@@ -78,7 +87,7 @@ function getHighestLayoutOrder(cat)
         for i,v in pairs(tab.Items:GetChildren()) do
             if v:IsA("Frame") then
                 if GuiMain.Tabs[cat][v.Name] then
-                    if v.LayoutOrder > highest or highest == nil then
+                    if highest == nil or (v.LayoutOrder > highest) then
                         highest = v.LayoutOrder
                     end
                 end
@@ -91,7 +100,7 @@ end
 function GuiMain.loadGui()
     local Bedrock = Instance.new("ScreenGui")
     local Tabs = Instance.new("ScrollingFrame")
-    local GuiLabel = Instance.new("TextLabel")
+    local GuiLabel = Instance.new("TextButton")
 
     Bedrock.Name = "Bedrock"
     Bedrock.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -102,6 +111,7 @@ function GuiMain.loadGui()
     Tabs.Active = true
     Tabs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     Tabs.BackgroundTransparency = 1.000
+    Tabs.Position = UDim2.new(1,0,0,0)
     Tabs.BorderColor3 = Color3.fromRGB(0, 0, 0)
     Tabs.BorderSizePixel = 0
     Tabs.ClipsDescendants = false
@@ -110,57 +120,42 @@ function GuiMain.loadGui()
 
     GuiLabel.Name = "GuiLabel"
     GuiLabel.Parent = Bedrock
-    GuiLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    GuiLabel.BackgroundTransparency = 1.000
+    GuiLabel.BackgroundColor3 = Color3.fromRGB(75,75,75)
+    GuiLabel.BackgroundTransparency = 0
     GuiLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
     GuiLabel.BorderSizePixel = 0
     GuiLabel.Position = UDim2.new(0.424710423, 0, 0, 0)
     GuiLabel.Size = UDim2.new(0.150000006, 0, 0.0500000007, 0)
-    GuiLabel.Font = Enum.Font.Unknown
+    GuiLabel.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
     GuiLabel.Text = "Bedrock"
     GuiLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
     GuiLabel.TextScaled = true
     GuiLabel.TextSize = 14.000
     GuiLabel.TextWrapped = true
     bedrock = Bedrock
-    local Utility = Instance.new("TextButton")
-    local Items = Instance.new("ScrollingFrame")
-    local UIListLayout = Instance.new("UIListLayout")
-
-    Utility.Name = "Utility"
-    Utility.Parent = Tabs
-    Utility.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
-    Utility.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Utility.BorderSizePixel = 0
-    Utility.Position = UDim2.new(0, 0, 0.324999988, 0)
-    Utility.Size = UDim2.new(0.135000005, 0, 0.349999994, 0)
-    Utility.Font = Enum.Font.Unknown
-    Utility.Text = "Utility"
-    Utility.TextColor3 = Color3.fromRGB(0, 0, 0)
-    Utility.TextScaled = true
-    Utility.TextSize = 14.000
-    Utility.TextWrapped = true
-
-    Items.Name = "Items"
-    Items.Parent = Utility
-    Items.Active = true
-    Items.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
-    Items.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Items.BorderSizePixel = 0
-    Items.ClipsDescendants = false
-    Items.Position = UDim2.new(0, 0, 1, 0)
-    Items.Size = UDim2.new(1, 0, 10, 0)
-    Items.Visible = false
-    Items.CanvasSize = UDim2.new(0, 0, 0, 0)
-
-    UIListLayout.Parent = Items
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    local Blur = Instance.new("BlurEffect", game.Lighting)
+    Blur.Size = 0
+    GuiLabel.MouseButton1Click:Connect(function()
+        if Blur.Size == 0 then
+            ts:Create(Blur,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Size = 30}):Play()
+            ts:Create(Tabs,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Position = UDim2.new(0,0,0,0)}):Play()
+            ts:Create(GuiLabel,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{BackgroundColor3 = toggleColors.Enabled}):Play()
+        else
+            ts:Create(Blur,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Size = 0}):Play()
+            ts:Create(Tabs,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Position = UDim2.new(1,0,0,0)}):Play() 
+            ts:Create(GuiLabel,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{BackgroundColor3 = Color3.fromRGB(75,75,75)}):Play() 
+        end
+    end)
 end
 function GuiMain.CreateToggle(info)
     local Toggle = Instance.new("Frame")
     local Item = Instance.new("TextButton")
     local Options = Instance.new("TextButton")
-    local Enabled = info.startEnabled
+    if (not GuiMain.Tabs[info.Category][info.Name]) then
+        GuiMain.Tabs[info.Category][info.Name] = {}
+        GuiMain.Tabs[info.Category][info.Name].Enabled = false
+    end
+    local Enabled = GuiMain.Tabs[info.Category][info.Name].Enabled
 
     Toggle.Name = info.Name
     Toggle.Parent = bedrock.Tabs[info.Category].Items
@@ -178,7 +173,7 @@ function GuiMain.CreateToggle(info)
     Item.BorderSizePixel = 0
     Item.LayoutOrder = 1
     Item.Size = UDim2.new(0.850000024, 0, 1, 0)
-    Item.Font = Enum.Font.Unknown
+    Item.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
     Item.TextColor3 = Color3.fromRGB(0, 0, 0)
     Item.TextScaled = true
     Item.TextSize = 14.000
@@ -208,6 +203,7 @@ function GuiMain.CreateToggle(info)
 
     Item.MouseButton1Click:Connect(function()
         Enabled = not Enabled
+        GuiMain.Tabs[info.Category][info.Name].Enabled = Enabled
         if Enabled == true then
             Toggle.BackgroundColor3 = toggleColors.Enabled
         else
@@ -218,6 +214,61 @@ function GuiMain.CreateToggle(info)
     return Toggle
 end
 function GuiMain.CreateTab(info)
-    
+    local Utility = Instance.new("TextButton")
+    local Items = Instance.new("ScrollingFrame")
+    local UIListLayout = Instance.new("UIListLayout")
+    if (not GuiMain.Tabs[info.Name]) then
+        GuiMain.Tabs[info.Name] = {}
+        GuiMain.Tabs[info.Name].Enabled = false
+    end
+    local Enabled = GuiMain.Tabs[info.Name].Enabled
+
+    Utility.Name = info.Name
+    Utility.Parent = bedrock.Tabs
+    Utility.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+    Utility.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Utility.BorderSizePixel = 0
+    Utility.Position = newTabPos
+    Utility.Size = UDim2.new(0.135000005, 0, 0.349999994, 0)
+    Utility.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    Utility.Text = info.Name
+    Utility.TextColor3 = Color3.fromRGB(0, 0, 0)
+    Utility.TextScaled = true
+    Utility.TextSize = 14.000
+    Utility.TextWrapped = true
+
+    Items.Name = "Items"
+    Items.Parent = Utility
+    Items.Active = true
+    Items.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+    Items.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Items.BorderSizePixel = 0
+    Items.ClipsDescendants = false
+    Items.Position = UDim2.new(0, 0, 25, 0)
+    Items.Size = UDim2.new(1, 0, 10, 0)
+    Items.Visible = true
+    Items.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+    UIListLayout.Parent = Items
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    newTabPos += tabAdd
+
+    if Enabled == true then
+        Utility.BackgroundColor3 = toggleColors.Enabled
+        Items.Position = UDim2.new(0,0,1,0)
+    end
+
+    Utility.MouseButton1Click:Connect(function()
+        Enabled = not Enabled
+        GuiMain.Tabs[info.Name].Enabled = Enabled
+        if Enabled == true then
+            ts:Create(Utility,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{BackgroundColor3 = toggleColors.Enabled}):Play()
+            ts:Create(Items,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Position = UDim2.new(0,0,1,0)}):Play()
+        else
+            ts:Create(Utility,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{BackgroundColor3 = toggleColors.Disabled}):Play()
+            ts:Create(Items,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Position = UDim2.new(0,0,25,0)}):Play()
+        end
+    end)
+    return Utility
 end
 return GuiMain

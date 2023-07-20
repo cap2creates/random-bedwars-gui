@@ -7,6 +7,7 @@ local scripts = {
 if scripts.GuiMain then print(scripts.GuiMain, https:JSONDecode(scripts.GuiMain)) end
 print(scripts, scripts.GuiMain, scripts.Functions)
 local file = "profile.txt"
+function runcode(func) func() end
 function save()
     if (writefile) then
         writefile("test/"..file,https:JSONEncode(scripts.GuiMain.Tabs))
@@ -23,8 +24,7 @@ function load()
         return false
     end
 end
-function mainscript.dothing()
-    --enter all gui stuff and everything here
+runcode(function()
     save()
-end
+end)
 return mainscript

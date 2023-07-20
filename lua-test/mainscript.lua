@@ -1,10 +1,8 @@
 local https = game:GetService("HttpService")
 local scripts = {
-    GuiMain = readfile("test/gui.lua"),
+    GuiMain = shared.gui,
     Functions = readfile("test/functions.lua"),
 }
-if scripts.GuiMain then print(scripts.GuiMain, https:JSONDecode(scripts.GuiMain)) end
-print(scripts, scripts.GuiMain, scripts.Functions)
 local file = "profile.txt"
 function runcode(func) func() end
 function save()

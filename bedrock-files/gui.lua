@@ -101,10 +101,12 @@ function GuiMain.loadGui()
     local Bedrock = Instance.new("ScreenGui")
     local Tabs = Instance.new("ScrollingFrame")
     local GuiLabel = Instance.new("TextButton")
+    local Enabled = false
 
     Bedrock.Name = "Bedrock"
     Bedrock.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
     Bedrock.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    Bedrock.ResetOnSpawn = false
 
     Tabs.Name = "Tabs"
     Tabs.Parent = Bedrock
@@ -135,8 +137,8 @@ function GuiMain.loadGui()
     bedrock = Bedrock
     local Blur = Instance.new("BlurEffect", game.Lighting)
     Blur.Size = 0
-    GuiLabel.MouseButton1Click:Connect(function()
-        if Blur.Size == 0 then
+    local function changeBlur()
+        if Enabled == true then
             ts:Create(Blur,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Size = 30}):Play()
             ts:Create(Tabs,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Position = UDim2.new(0,0,0,0)}):Play()
             ts:Create(GuiLabel,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{BackgroundColor3 = toggleColors.Enabled}):Play()
@@ -144,6 +146,16 @@ function GuiMain.loadGui()
             ts:Create(Blur,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Size = 0}):Play()
             ts:Create(Tabs,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Position = UDim2.new(1,0,0,0)}):Play() 
             ts:Create(GuiLabel,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{BackgroundColor3 = Color3.fromRGB(75,75,75)}):Play() 
+        end
+    end
+    GuiLabel.MouseButton1Click:Connect(function()
+        Enabled = not Enabled
+        changeBlur()
+    end)
+    uis.InputEnded:Connect(function(input)
+        if input.KeyCode == Enum.KeyCode.L then
+            Enabled = not Enabled
+            changeBlur()
         end
     end)
 end

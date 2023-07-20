@@ -1,7 +1,7 @@
 local mainscript = {}
 local scripts = {
-    GuiMain = shared.gui, --readfile("test/gui.lua"),
-    Functions = shared.functions, --readfile("test/functions.lua"),
+    GuiMain = loadfile("test/gui.lua"),
+    Functions = loadfile("test/functions.lua"),
 }
 local https = game:GetService("HttpService")
 local file = "profile.txt"

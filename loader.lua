@@ -1,8 +1,8 @@
 function githubRequest(url)
-    if not isfile("bedrock/"..url) then
-        writefile("bedrock/"..url,game:HttpGet("https://raw.githubusercontent.com/cap2creates/random-bedwars-gui/main/bedrock-files/"..url,true))
+    if not isfile("test/"..url) then
+        writefile("test/"..url,game:HttpGet("https://raw.githubusercontent.com/cap2creates/random-bedwars-gui/main/lua-test/"..url,true))
     end
-    return readfile("bedrock/"..url)
+    return readfile("test/"..url)
 end
 function load()
     local folder
@@ -12,19 +12,19 @@ function load()
         "gui.lua",
     }
     local dothingname = "mainscript.lua"
-    if (not isfolder("bedrock")) then
-        makefolder("bedrock")
+    if (not isfolder("test")) then
+        makefolder("test")
     end
-    folder = isfolder("bedrock")
+    folder = isfolder("test")
     for number,filename in pairs(filenames) do
-        if table.find(filenames,filename,1) and (not isfile("bedrock/"..filename)) then
+        if table.find(filenames,filename,1) and (not isfile("test/"..filename)) then
             local suc, err = pcall(function() githubRequest(filename) end)
             if err then warn(err) end
         end
     end
-	shared.gui = loadstring(readfile("bedrock/gui.lua"))()
-	shared.functions = loadstring(readfile("bedrock/functions.lua"))()
-	shared.mainscript = loadstring(readfile("bedrock/mainscript.lua"))()
+	shared.gui = loadstring(readfile("test/gui.lua"))()
+	shared.functions = loadstring(readfile("test/functions.lua"))()
+	shared.mainscript = loadstring(readfile("test/mainscript.lua"))()
     return
 end
 load()

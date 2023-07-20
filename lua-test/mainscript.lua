@@ -1,9 +1,12 @@
+if shared.scriptRunning then warn("This script is already running!") end
+shared.scriptRunning = true
 local https = game:GetService("HttpService")
 local scripts = {
     GuiMain = shared.gui,
-    Functions = readfile("test/functions.lua"),
+    Functions = shared.functions,
 }
 local file = "profile.txt"
+local gui = scripts.GuiMain.loadGui()
 function runcode(func) func() end
 function save()
     if (writefile) then
@@ -21,6 +24,17 @@ function load()
         return false
     end
 end
-runcode(function()
+function disconnect()
     save()
+    for i,v in pairs(scripts.GuiMain.Tabs) do
+        for i,v in pairs(v) do
+            if v.Enabled or (not v.Enabled) then
+                v.Enabled = false
+            end
+        end
+    end
+    gui:Destroy()
+end
+runcode(function()
+    scripts.Functions.print("hello2lo")
 end)

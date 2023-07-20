@@ -1,10 +1,11 @@
 local mainscript = {}
-local scripts = {
-    GuiMain = shared.gui,
-    Functions = shared.functions,
-}
-print(scripts, scripts.GuiMain, scripts.Functions)
 local https = game:GetService("HttpService")
+local scripts = {
+    GuiMain = readfile("test/gui.lua"),
+    Functions = readfile("test/functions.lua"),
+}
+if scripts.GuiMain then print(scripts.GuiMain, https:JSONDecode(scripts.GuiMain)) end
+print(scripts, scripts.GuiMain, scripts.Functions)
 local file = "profile.txt"
 function save()
     if (writefile) then

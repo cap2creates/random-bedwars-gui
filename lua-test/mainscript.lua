@@ -21,8 +21,8 @@ function load()
         return false
     end
 end
-function mainscript.dothing()
+--function mainscript.dothing()
     --enter all gui stuff and everything here
     save()
-end
+--end
 return mainscript

@@ -1,3 +1,4 @@
+shared.gui = script
 local GuiMain = {
     Tabs = {
         Utility = {},

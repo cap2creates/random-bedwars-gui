@@ -19,6 +19,12 @@ local GuiMain = {
         Combat = {},
         Extra = {},
     },
+    DefaultPositions = {
+        Utility = {},
+        Player = {},
+        Combat = {},
+        Extra = {},
+    },
 }
 local uis = game:GetService("UserInputService")
 local rs = game:GetService("RunService")
@@ -34,6 +40,9 @@ local toggleColors = {
     Disabled = Color3.fromRGB(60,60,60),
     Enabled = Color3.fromRGB(30,155,220)
 }
+local toggleNotifications = false
+local buttonNotifications = false
+function runcode(func) task.spawn(func) end
 function drag(input)
     local gui = input
     local dragging
@@ -99,6 +108,7 @@ function getHighestLayoutOrder(cat)
 end
 function GuiMain.loadGui()
     local Bedrock = Instance.new("ScreenGui")
+    
     local Tabs = Instance.new("ScrollingFrame")
     local GuiLabel = Instance.new("TextButton")
     local Enabled = false
@@ -136,8 +146,10 @@ function GuiMain.loadGui()
     GuiLabel.TextWrapped = true
     bedrock = Bedrock
     local Blur = Instance.new("BlurEffect", game.Lighting)
+    Blur.Name = "BedrockBlur"
     Blur.Size = 0
     local function changeBlur()
+        if not shared.bedrockRunning then return end
         if Enabled == true then
             ts:Create(Blur,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Size = 30}):Play()
             ts:Create(Tabs,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Position = UDim2.new(0,0,0,0)}):Play()
@@ -158,19 +170,133 @@ function GuiMain.loadGui()
             changeBlur()
         end
     end)
+    return Bedrock
 end
-function GuiMain.CreateToggle(info)
+function GuiMain.MakeKeybindGui()
+    local Keybind = Instance.new("Frame")
+    local ItemName = Instance.new("TextButton")
+    local Bind = Instance.new("TextButton")
+
+    Keybind.Name = "Keybind"
+    Keybind.Parent = game:GetService("ReplicatedStorage")
+    Keybind.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    Keybind.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Keybind.BorderSizePixel = 0
+    Keybind.Size = UDim2.new(1, 0, 0.100000001, 0)
+    Keybind.Visible = false
+
+    ItemName.Name = "ItemName"
+    ItemName.Parent = Keybind
+    ItemName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ItemName.BackgroundTransparency = 1.000
+    ItemName.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    ItemName.BorderSizePixel = 0
+    ItemName.LayoutOrder = 1
+    ItemName.Size = UDim2.new(0.850000024, 0, 1, 0)
+    ItemName.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    ItemName.Text = "Keybind"
+    ItemName.TextColor3 = Color3.fromRGB(0, 0, 0)
+    ItemName.TextScaled = true
+    ItemName.TextSize = 14.000
+    ItemName.TextWrapped = true
+
+    Bind.Name = "Bind"
+    Bind.Parent = Keybind
+    Bind.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Bind.BackgroundTransparency = 1.000
+    Bind.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Bind.BorderSizePixel = 0
+    Bind.Position = UDim2.new(0.850000024, 0, 0, 0)
+    Bind.Size = UDim2.new(0.150000006, 0, 1, 0)
+    Bind.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    Bind.Text = ""
+    Bind.TextColor3 = Color3.fromRGB(0, 0, 0)
+    Bind.TextScaled = true
+    Bind.TextSize = 14.000
+    Bind.TextWrapped = true
+    return Keybind
+end
+function GuiMain.CreateNotification(cat,info,time)
+    local Notification = Instance.new("Frame")
+    local Category = Instance.new("TextLabel")
+    local Message = Instance.new("TextLabel")
+    local Time = Instance.new("TextLabel")
+
+    Notification.Name = "Notification"
+    Notification.Parent = game.Players.LocalPlayer.PlayerGui.Bedrock
+    Notification.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+    Notification.BackgroundTransparency = 0.400
+    Notification.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Notification.BorderSizePixel = 0
+    Notification.Position = UDim2.new(0.783616722, 0, 0.764890254, 0)
+    Notification.Size = UDim2.new(0,0,0,0)
+
+    Category.Name = "Category"
+    Category.Parent = Notification
+    Category.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Category.BackgroundTransparency = 1.000
+    Category.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Category.BorderSizePixel = 0
+    Category.Size = UDim2.new(1, 0, 0.270000011, 0)
+    Category.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    Category.Text = cat
+    Category.TextColor3 = Color3.fromRGB(0, 0, 0)
+    Category.TextScaled = true
+    Category.TextSize = 14.000
+    Category.TextWrapped = true
+
+    Message.Name = "Message"
+    Message.Parent = Notification
+    Message.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Message.BackgroundTransparency = 1.000
+    Message.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Message.BorderSizePixel = 0
+    Message.Position = UDim2.new(0, 0, 0.343283564, 0)
+    Message.Size = UDim2.new(0.800000012, 0, 0.649999976, 0)
+    Message.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    Message.Text = info
+    Message.TextColor3 = Color3.fromRGB(0, 0, 0)
+    Message.TextScaled = true
+    Message.TextSize = 14.000
+    Message.TextWrapped = true
+
+    Time.Name = "Time"
+    Time.Parent = Notification
+    Time.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Time.BackgroundTransparency = 1.000
+    Time.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Time.BorderSizePixel = 0
+    Time.Position = UDim2.new(0.799999833, 0, 0.626865625, 0)
+    Time.Size = UDim2.new(0.200000003, 0, 0.370000005, 0)
+    Time.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    Time.Text = time
+    Time.TextColor3 = Color3.fromRGB(0, 0, 0)
+    Time.TextScaled = true
+    Time.TextSize = 14.000
+    Time.TextWrapped = true
+    task.spawn(function()
+        ts:Create(Notification,TweenInfo.new(0.25,Enum.EasingStyle.Bounce,Enum.EasingDirection.Out,0),{Size = UDim2.new(0.192, 0,0.21, 0)}):Play()
+        for i=1,time-1 do
+            task.wait(0.98)
+            time -= 1
+            Time.Text = time
+        end
+        task.wait(0.98)
+        Time.Text = "0"
+        ts:Create(Notification,TweenInfo.new(0.25,Enum.EasingStyle.Bounce,Enum.EasingDirection.Out,0),{Size = UDim2.new(0,0,0,0)}):Play()
+    end)
+end
+function GuiMain.CreateButton(info)
     local Toggle = Instance.new("Frame")
     local Item = Instance.new("TextButton")
     local Options = Instance.new("TextButton")
     if (not GuiMain.Tabs[info.Category][info.Name]) then
         GuiMain.Tabs[info.Category][info.Name] = {}
-        GuiMain.Tabs[info.Category][info.Name].Enabled = false
+        GuiMain.Tabs[info.Category][info.Name].Keybind = nil
     end
-    local Enabled = GuiMain.Tabs[info.Category][info.Name].Enabled
 
     Toggle.Name = info.Name
-    Toggle.Parent = bedrock.Tabs[info.Category].Items
+    Toggle.Parent = bedrock.Tabs:WaitForChild(info.Category):WaitForChild("Items")
     Toggle.LayoutOrder = getHighestLayoutOrder(info.Category)
     Toggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -208,9 +334,121 @@ function GuiMain.CreateToggle(info)
     Options.TextSize = 14.000
     Options.TextWrapped = true
 
+    GuiMain.GuiOpenableItems[info.Category][info.Name] = {}
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind = {}
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame = GuiMain.MakeKeybindGui()
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame.LayoutOrder = Toggle.LayoutOrder
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Set = GuiMain.Tabs[info.Category][info.Name].Keybind
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame.Bind.Text = GuiMain.Tabs[info.Category][info.Name].Keybind or ""
+
+    Item.MouseButton1Click:Connect(function()
+        task.spawn(function()
+            info.Function()
+        end)
+    end)
+    Options.MouseButton1Click:Connect(function()
+        for i,v in pairs(GuiMain.GuiOpenableItems[info.Category][info.Name]) do
+            v.Frame.Visible = not v.Frame.Visible
+            v.Frame.Parent = Toggle.Parent
+        end
+    end)
+    uis.InputEnded:Connect(function(input)
+        if GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Set ~= nil and input.KeyCode == Enum.KeyCode[GuiMain.Tabs[info.Category][info.Name].Keybind] then
+            task.spawn(function()
+                info.Function()
+            end)
+            if buttonNotifications then GuiMain.CreateNotification("Keybind", info.Name.." has been activated!", 4) end
+        end
+    end)
+    local keybindRunning = false
+    local function keybind()
+        local keybindtable = GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind
+        if not keybindtable then return end
+        local frame = keybindtable.Frame
+        if not frame then return end
+        frame.Bind.Text = "..."
+        if keybindRunning == true then
+            frame.Bind.Text = keybindtable.Set
+        elseif keybindRunning == false then
+            keybindRunning = true
+            uis.InputEnded:Connect(function(input)
+                if keybindRunning == true and not (input.KeyCode.Name == "Unknown") then
+                    keybindRunning = false
+                    keybindtable.Set = input.KeyCode.Name
+                    frame.Bind.Text = input.KeyCode.Name
+                    GuiMain.Tabs[info.Category][info.Name].Keybind = input.KeyCode.Name
+                else
+                    
+                end
+            end)
+        end
+    end
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame.Bind.MouseButton1Click:Connect(keybind)
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame.ItemName.MouseButton1Click:Connect(keybind)
+    return Toggle
+end
+function GuiMain.CreateToggle(info)
+    local Toggle = Instance.new("Frame")
+    local Item = Instance.new("TextButton")
+    local Options = Instance.new("TextButton")
+    if (not GuiMain.Tabs[info.Category][info.Name]) then
+        GuiMain.Tabs[info.Category][info.Name] = {}
+        GuiMain.Tabs[info.Category][info.Name].Enabled = false
+        GuiMain.Tabs[info.Category][info.Name].Keybind = nil
+    end
+    local Enabled = GuiMain.Tabs[info.Category][info.Name].Enabled
+
+    Toggle.Name = info.Name
+    Toggle.Parent = bedrock.Tabs:WaitForChild(info.Category):WaitForChild("Items")
+    Toggle.LayoutOrder = getHighestLayoutOrder(info.Category)
+    Toggle.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Toggle.BorderSizePixel = 0
+    Toggle.Size = UDim2.new(1, 0, 0.100000001, 0)
+
+    Item.Name = "ItemName"
+    Item.Parent = Toggle
+    Item.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Item.BackgroundTransparency = 1.000
+    Item.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Item.BorderSizePixel = 0
+    Item.LayoutOrder = 1
+    Item.Size = UDim2.new(0.850000024, 0, 1, 0)
+    Item.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+    Item.TextColor3 = Color3.fromRGB(0, 0, 0)
+    Item.TextScaled = true
+    Item.TextSize = 14.000
+    Item.TextWrapped = true
+    Item.Text = Toggle.Name
+
+    Options.Name = "Options"
+    Options.Parent = Toggle
+    Options.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Options.BackgroundTransparency = 1.000
+    Options.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Options.BorderSizePixel = 0
+    Options.Position = UDim2.new(0.850000024, 0, 0, 0)
+    Options.Rotation = 90.000
+    Options.Size = UDim2.new(0.150000006, 0, 1, 0)
+    Options.Font = Enum.Font.FredokaOne
+    Options.Text = "..."
+    Options.TextColor3 = Color3.fromRGB(0, 0, 0)
+    Options.TextScaled = true
+    Options.TextSize = 14.000
+    Options.TextWrapped = true
+
+    GuiMain.GuiOpenableItems[info.Category][info.Name] = {}
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind = {}
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame = GuiMain.MakeKeybindGui()
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame.LayoutOrder = Toggle.LayoutOrder
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Set = GuiMain.Tabs[info.Category][info.Name].Keybind
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame.Bind.Text = GuiMain.Tabs[info.Category][info.Name].Keybind or ""
+
     if Enabled == true then
         Toggle.BackgroundColor3 = toggleColors.Enabled
-        info.Function(Enabled)
+        task.spawn(function()
+            info.Function(Enabled)
+        end)
     end
 
     Item.MouseButton1Click:Connect(function()
@@ -221,7 +459,62 @@ function GuiMain.CreateToggle(info)
         else
             Toggle.BackgroundColor3 = toggleColors.Disabled
         end
-        info.Function(Enabled)
+        task.spawn(function()
+            info.Function(Enabled)
+        end)
+    end)
+    Options.MouseButton1Click:Connect(function()
+        for i,v in pairs(GuiMain.GuiOpenableItems[info.Category][info.Name]) do
+            v.Frame.Visible = not v.Frame.Visible
+            v.Frame.Parent = Toggle.Parent
+        end
+    end)
+    uis.InputEnded:Connect(function(input)
+        if GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Set ~= nil and input.KeyCode == Enum.KeyCode[GuiMain.Tabs[info.Category][info.Name].Keybind] then
+            Enabled = not Enabled
+            GuiMain.Tabs[info.Category][info.Name].Enabled = Enabled
+            if Enabled == true then
+                Toggle.BackgroundColor3 = toggleColors.Enabled
+            else
+                Toggle.BackgroundColor3 = toggleColors.Disabled
+            end
+            task.spawn(function()
+                info.Function(Enabled)
+            end)
+            if toggleNotifications then GuiMain.CreateNotification("Keybind",info.Name.." has been toggled! Activated: "..tostring(Enabled), 4) end
+        end
+    end)
+    local keybindRunning = false
+    local function keybind()
+        local keybindtable = GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind
+        if not keybindtable then return end
+        local frame = keybindtable.Frame
+        if not frame then return end
+        frame.Bind.Text = "..."
+        if keybindRunning == true then
+            frame.Bind.Text = keybindtable.Set
+        elseif keybindRunning == false then
+            keybindRunning = true
+            uis.InputEnded:Connect(function(input)
+                if keybindRunning == true and not (input.KeyCode.Name == "Unknown") then
+                    keybindRunning = false
+                    keybindtable.Set = input.KeyCode.Name
+                    frame.Bind.Text = input.KeyCode.Name
+                    GuiMain.Tabs[info.Category][info.Name].Keybind = input.KeyCode.Name
+                else
+                    
+                end
+            end)
+        end
+    end
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame.Bind.MouseButton1Click:Connect(keybind)
+    GuiMain.GuiOpenableItems[info.Category][info.Name].Keybind.Frame.ItemName.MouseButton1Click:Connect(keybind)
+    rs.RenderStepped:Connect(function()
+        if shared.Disconnect == true and Enabled then
+            task.spawn(function()
+                info.Function(false)
+            end)
+        end
     end)
     return Toggle
 end
@@ -233,14 +526,22 @@ function GuiMain.CreateTab(info)
         GuiMain.Tabs[info.Name] = {}
         GuiMain.Tabs[info.Name].Enabled = false
     end
+    if (not GuiMain.Tabs[info.Name].Position) then
+        GuiMain.Tabs[info.Name].Position = {newTabPos.X.Scale,newTabPos.X.Offset,newTabPos.Y.Scale,newTabPos.Y.Offset}
+    end
+    if not GuiMain.GuiOpenableItems[info.Name] then
+        GuiMain.GuiOpenableItems[info.Name] = {}
+    end
     local Enabled = GuiMain.Tabs[info.Name].Enabled
+
+    GuiMain.DefaultPositions[info.Name] = {info.Name,newTabPos.X.Scale, newTabPos.X.Offset, newTabPos.Y.Scale, newTabPos.Y.Offset}
 
     Utility.Name = info.Name
     Utility.Parent = bedrock.Tabs
     Utility.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
     Utility.BorderColor3 = Color3.fromRGB(0, 0, 0)
     Utility.BorderSizePixel = 0
-    Utility.Position = newTabPos
+    Utility.Position = UDim2.new(GuiMain.Tabs[info.Name].Position[1],GuiMain.Tabs[info.Name].Position[2],GuiMain.Tabs[info.Name].Position[3],GuiMain.Tabs[info.Name].Position[4])
     Utility.Size = UDim2.new(0.135000005, 0, 0.349999994, 0)
     Utility.FontFace = Font.new("rbxasset://fonts/families/Zekton.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
     Utility.Text = info.Name
@@ -281,6 +582,20 @@ function GuiMain.CreateTab(info)
             ts:Create(Items,TweenInfo.new(0.15,Enum.EasingStyle.Linear,Enum.EasingDirection.Out,0),{Position = UDim2.new(0,0,25,0)}):Play()
         end
     end)
+    drag(Utility)
+    game:GetService("RunService").RenderStepped:Connect(function()
+        GuiMain.Tabs[info.Name].Position = {Utility.Position.X.Scale, Utility.Position.X.Offset, Utility.Position.Y.Scale, Utility.Position.Y.Offset}
+    end)
     return Utility
 end
+runcode(function()
+    repeat task.wait() until bedrock
+    task.wait(0.5)
+    GuiMain.CreateToggle({Category = "Extra", Name = "Toggle Notifications", Function = function(callback)
+        toggleNotifications = callback
+    end})
+    GuiMain.CreateToggle({Category = "Extra", Name = "Button Notifications", Function = function(callback)
+        buttonNotifications = callback
+    end})
+end)
 return GuiMain

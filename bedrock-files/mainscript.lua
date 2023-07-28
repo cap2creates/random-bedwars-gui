@@ -40,13 +40,7 @@ function disconnect()
     end
     gui:Destroy()
 end
-runcode(function()
-    --this is where you create tabs. required: {Name: name of tab.}
-    scripts.GuiMain.CreateTab({Name = "Combat",})
-    scripts.GuiMain.CreateTab({Name = "Player",})
-    scripts.GuiMain.CreateTab({Name = "Utility",})
-    scripts.GuiMain.CreateTab({Name = "Extra",})
-end)
+--categories are at the bottom of the gui library, add and change them there. you can also add toggles there
 runcode(function()
     --creating the gui in tabs, this is where you add buttons and stuff. required: {Category: the category for it to be in, Name: the name of it, Function: a function containing what you need. callback is enabled/disabled.}
     scripts.GuiMain.CreateToggle({Category = "Utility", Name = "Test", Function = function(callback)

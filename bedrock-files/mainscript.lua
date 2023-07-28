@@ -42,7 +42,6 @@ function disconnect()
 end
 runcode(function()
     --this is where you create tabs. required: {Name: name of tab.}
-    scripts.GuiMain.loadGui() --DO NOT mess with it will break the gui
     scripts.GuiMain.CreateTab({Name = "Combat",})
     scripts.GuiMain.CreateTab({Name = "Player",})
     scripts.GuiMain.CreateTab({Name = "Utility",})

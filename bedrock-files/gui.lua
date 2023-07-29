@@ -590,7 +590,12 @@ function GuiMain.CreateTab(info)
 end
 runcode(function()
     repeat task.wait() until bedrock
-    task.wait(0.5)
+    task.wait(0.1)
+    scripts.GuiMain.CreateTab({Name = "Combat",})
+    scripts.GuiMain.CreateTab({Name = "Player",})
+    scripts.GuiMain.CreateTab({Name = "Utility",})
+    scripts.GuiMain.CreateTab({Name = "ESP",})
+    scripts.GuiMain.CreateTab({Name = "Extra",})
     GuiMain.CreateToggle({Category = "Extra", Name = "Toggle Notifications", Function = function(callback)
         toggleNotifications = callback
     end})

@@ -390,3 +390,113 @@ end)
 		end
 	end})
 end)
+runcode(function()
+    while task.wait(1) do
+        bedwarsStore.localInventory =  bedwars["ClientHandlerStore"]:getState().Inventory.observedInventory
+    end
+end)
+runcode(function()
+    local valid = true
+    game.Players.PlayerRemoving:Connect(function(p)
+        if p == lplr and valid then
+            save()
+        end
+    end)
+    repeat
+        task.wait(0.05)
+        if shared.Disconnect == true then
+            valid = false
+        end
+    until not valid
+end)
+runcode(function()
+    repeat
+        task.wait(0.005)
+    until matchState() ~= 0
+    task.wait(1)
+    local y = math.huge
+    for i,v in pairs(workspace.Map.Worlds:FindFirstChildOfClass("Folder").Blocks:GetChildren()) do
+        if v and v.Position and v.Position.Y < y then
+            y = v.Position.Y
+        end
+    end
+    antivoidYPos = y
+end)
+runcode(function()
+    function getFPS()
+        local oldTime
+        game:GetService("RunService").RenderStepped:Connect(function()
+            if not oldTime then
+                oldTime = tick()
+            elseif oldTime then
+                pFPS = math.floor(1/(tick()-oldTime))
+                oldTime = tick()
+            end
+        end)
+    end
+    task.spawn(getFPS)
+end)
+runcode(function()
+    bedwarsStore.queueType = bedwars["ClientHandlerStore"]:getState().Game.queueType or "bedwars_test"
+end)
+runcode(function()
+    --player list handler
+    local function doThing(p)
+        runcode(function()
+            local inJump = false
+            if p == nil then return end
+            playerList[p.Name] = {Alive = false, JumpTick = 0, Valid = false, Jumps = 0, Jumping = false,}
+            local c = nil or p.Character
+            if not c then repeat c = nil or p.Character task.wait(0.005) until c end
+            repeat
+                task.wait(0.005)
+                if p == nil then return end
+                if not isAlive(p) or not playerValid(p) then break end
+                playerList[p.Name].Alive = isAlive(p)
+                playerList[p.Name].Valid = playerValid(p)
+                local state = c.Humanoid:GetState()
+                playerList[p.Name].JumpTick = (state ~= Enum.HumanoidStateType.Running and state ~= Enum.HumanoidStateType.Landed) and tick() or playerList[p.Name].JumpTick
+                playerList[p.Name].Jumping = (tick() - playerList[p.Name].JumpTick) < 0.2 and playerList[p.Name].Jumps > 1
+                if (tick() - playerList[p.Name].JumpTick) > 0.2 then 
+                    playerList[p.Name].Jumps = 0
+                end
+                if state == Enum.HumanoidStateType.Jumping and (not inJump) then
+                    inJump = true
+                    runcode(function()
+                        repeat
+                            task.wait(0.005)
+                            if p == nil or not playerValid(p) then return end
+                        until c.Humanoid:GetState() == Enum.HumanoidStateType.Landed
+                        playerList[p.Name].Jumps += 1
+                        inJump = false
+                    end)
+                end
+            until not isAlive(p) or not playerValid(p)
+            if p == nil then return end
+            playerList[p.Name].Alive = isAlive(p)
+            playerList[p.Name].Valid = playerValid(p)
+            repeat
+                if p == nil then return end
+                task.wait(0.005)
+                playerList[p.Name].Alive = isAlive(p)
+                playerList[p.Name].Valid = playerValid(p)
+            until isAlive(p)
+            if p == nil then return end
+            doThing(p)
+        end)
+    end
+    repeat
+        task.wait(0.005)
+    until matchState() ~= 0
+    for i,v in pairs(game.Players:GetPlayers()) do
+        doThing(v)
+    end
+    game.Players.PlayerAdded:Connect(function(p)
+        doThing(p)
+    end)
+    game.Players.PlayerRemoving:Connect(function(p)
+        if playerList[p.Name] then
+            playerList[p.Name] = nil
+        end
+    end)
+end)

@@ -1,4 +1,4 @@
-f shared.bedrockRunning then warn("Bedrock is already running!") return end
+if shared.bedrockRunning then warn("Bedrock is already running!") return end
 shared.bedrockRunning = true
 shared.startTime = os.time()
 repeat task.wait(.01) until game.Players.LocalPlayer and game.Players.LocalPlayer.Character

@@ -211,6 +211,48 @@ local function load()
     end
 end
 load()
+local function isAlive(plr,isChar)
+    if isChar then
+        plr = game.Players:FindFirstChild(plr.Name) or lplr
+    else
+        plr = plr or lplr 
+    end
+	if not plr.Character then return false end
+	if not plr.Character:FindFirstChild("Head") then return false end
+	if not plr.Character:FindFirstChild("Humanoid") then return false end
+	if plr.Character:FindFirstChild("Humanoid").Health < 0.11 then return false end
+	return true
+end
+local function disconnect()
+    save()
+    maingui:Destroy()
+    shared.bedrockRunning = false
+    shared.Disconnect = true
+    if game.Lighting:FindFirstChild("BedrockBlur") then
+        game.Lighting.BedrockBlur:Destroy()
+    end
+    task.wait(.2)
+    shared.Disconnect = false
+end
+local function getNearestPlayer(checkForTeam,blacklist,checkforantivoid)
+    local closestDistance = math.huge
+    local closestPlayer = nil
+    for i,v in pairs(game.Players:GetPlayers()) do
+        if v and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and isAlive(v)==true and lplr and lplr.Character and lplr.Character:FindFirstChild("HumanoidRootPart") and isAlive(lplr) == true and v~=lplr and (blacklist and (not blacklist[v]) or true) then
+            if checkforantivoid and v.Character.HumanoidRootPart.Position.Y < antivoidYPos then continue end
+            if checkForTeam and (v.Team==lplr.Team or v.TeamColor==lplr.TeamColor) then continue end
+            if (v.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude < closestDistance then 
+                closestDistance = (v.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude 
+                closestPlayer = v
+            end
+        end
+    end
+    if closestPlayer == nil then return nil end
+    return closestPlayer.Character
+end
+local function playerValid(p)
+    return (p and p.Character and p.Character:FindFirstChild("Humanoid") and p.Character:FindFirstChild("HumanoidRootPart") and isAlive(p) and true or false)
+end
 local tabs = {
     Combat = gui:CreateTab({Name = "Combat",}),
     Player = gui:CreateTab({Name = "Player",}),
@@ -240,7 +282,7 @@ runcode(function()
         if Speed then
             task.wait(.5)
             RunLoops:BindToRenderStep("Speed",function()
-                if playerValid(lplr) and not scripts.GuiMain.Tabs.Player.Fly.Enabled and not scripts.GuiMain.Tabs.Player.InfiniteFly.Enabled then
+                if playerValid(lplr) then
                     lplr.Character.HumanoidRootPart.CFrame += (type == "CFrame" and lplr.Character.Humanoid.MoveDirection*((1/pFPS)*(SpeedBar.Value-lplr.Character.Humanoid.WalkSpeed)) or Vector3.new(0,0,0))
                     lplr.Character.HumanoidRootPart.Velocity = (type == "Velocity" and Vector3.new((lplr.Character.Humanoid.MoveDirection*SpeedBar.Value).X,lplr.Character.HumanoidRootPart.Velocity.Y,(lplr.Character.Humanoid.MoveDirection*SpeedBar.Value).Z) or lplr.Character.HumanoidRootPart.Velocity)
                 end
